@@ -1,0 +1,74 @@
+/* 
+A CSS ruleset is how we change elements by giving them properties.
+We so this using an selector followed by a declaration block, 
+so for the first usage in this sheet, height IS the selector : { 100% } IS the declaration block.
+Note the declaration block is always in {}, and multiple elements can be modified in the declaration block.
+*/
+
+/* Pure Element Styles */
+
+body {
+    font-family: 'Open Sans';  /*This font was linked to using the link in the index page */
+    color: white; /* Font color will be white */
+    min-height: 100%; /* Sets body height to 100% of the window */
+}
+
+html {
+/* This will modify all elements in the <HTML> tag linked in HTML documents */
+    height: 100%; /* Sets height of our HTML element to 100% of the window */
+    font-size: 100%; 
+}
+
+
+
+/* Pure Class Styles */
+
+.hero-content {
+    position: relative; /* Box is in flow of the document, but can be shifted and create coordinates */
+    min-height: 600px; /* Specifies minimum height for this block */
+    background-image: url(../assets/images/bloc_jams_bg.jpg); /* Specifies background image to use */
+    background-repeat: no-repeat; /* Do not create a repeated image */
+    background-position: center center; /*center horizontally (first) and vertically (second) */
+    background-size: cover; /*scales the image so it always covers the entire background*/
+}
+
+.navbar {
+    /* rem stands for Root em. It is a relative unit for calculating size of an element. em is defined by the width of 'm' in a particlar font. The root em is based on the font size of the root element, in this case the HTML parent. Rem is useful for element sizing  */
+    padding: 0.5rem;
+    background-color: rgb(101,18,95);
+}
+
+/* Pure ID Styles */
+
+/* Mixed Styles */
+
+
+body.landing {
+/* This selector will apply to any <body> tag that has a landing class in the linked HTML document */    
+    background-color: rgb(58,23,63);
+}
+
+.hero-content .hero-title {
+    position: absolute;
+    top: 40%;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);     
+    width: 100%;
+    text-align: center;
+    font-size: 4rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.5rem;
+    text-shadow: 1px 1px 0px rgb(58,23,63);
+    
+}
+
+
+.navbar .logo {
+/* This is a dependant selector. This will apply changes to the .logo classes which are within a .navbar class. It is important to seperate them with a space */
+    position: relative;
+    left: 2rem;
+}
+
+
