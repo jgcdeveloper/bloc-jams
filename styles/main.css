@@ -32,15 +32,41 @@ html {
     background-size: cover; /*scales the image so it always covers the entire background*/
 }
 
+.ion-music-note, .ion-radio-waves, .ion-iphone {
+/*commas allow us to give a similar set of styles to multiple classes without needing to retype them all. */    
+    color: rgb(233,50,177);
+    font-size: 5rem;
+}
+
 .navbar {
     /* rem stands for Root em. It is a relative unit for calculating size of an element. em is defined by the width of 'm' in a particlar font. The root em is based on the font size of the root element, in this case the HTML parent. Rem is useful for element sizing  */
     padding: 0.5rem;
     background-color: rgb(101,18,95);
 }
 
+.point {
+    display: table-cell; /* Allows the element to work like a TD element. */
+    position: relative; /* Sets the position of point to relative, which is in the flow of the parent element, in this case, all the div points are in the selling points section */
+    width: 33.3%; /* Width of the element will be set to 33.3% of the parent element. Since we have this acting like a table cell, the cell will now have a width of 33.3% */
+    padding: 2rem; /* This adds padding around the box to give some space for the text. */
+    text-align: center; /* This will text align center */
+    
+}
+
+.selling-points {
+    position: relative; /* Again, sets the position as relative, so it is in the flow, but can be used to create coordinates */
+    display: table; /*allows the element to act like a table tag, which will allow us to set child elements to act as table cells, and be spaced as such */
+    width: 100%; /* Sets the selling point section to 100% width of the parent element. In this case the parent for width is the body */
+    
+    /* Border boxs are different then content boxes. In a border box, the dimentions of the box if set with height and width properties will include the content, padding & border in the calculation. A content box only uses the content in this calculation, and the pardding, border, and margin are not included and any size for them will increase dimension of the box. Note that this element needs to use vendor tags for both webkit and for mozilla */
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
 /* Pure ID Styles */
 
-/* Mixed Styles */
+/* Mixed Styles - Element selectors are sorted first. Then mixed selectors starting with a class. Finally mixed selectors starting with an ID are used */
 
 
 body.landing {
@@ -49,21 +75,27 @@ body.landing {
 }
 
 .hero-content .hero-title {
-    position: absolute;
-    top: 40%;
+/*This will edit the title in the hero content box. Note that .hero-title class is set for an element that is a child of the .hero-content class */
+    
+    position: absolute; /* This will set the title to an absolute position, but as a child of hero-content (which is relative), it will absolute to the coordinates of the hero-content container*/
+    top: 40%; /* This sets up a 40% offset from the top for the .hero-titile */
+    
+    /* These are vendor prefixes. These are required when CSS code that has not been officially adopted by CSS3 is used. Most often the purpose of these is to ensure compatibility with a certain type of browser (or an earlier version). Here we use transform: translateY with the vendor prefixes for -webkit (safari), -moz (mozilla/firefox) and -ms Mircrosoft. If we look up the transform element in W3 schools, we see that for example using this tag will allow firefox support for version 3.5, but leaving it out means it would only be compatible with 10. 
+    
+    Here, the Transform is used to shift an element here by =50%.  Note that elements will not reflow off a transformed box, so it can break thigs, That is why it is better used in an abolute element, which is already out of the normal flow of the document. There is a lot more to research on transform functionality */
     -webkit-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
     -ms-transform: translateY(-50%);     
-    width: 100%;
-    text-align: center;
-    font-size: 4rem;
-    font-weight: 300;
-    text-transform: uppercase;
-    letter-spacing: 0.5rem;
-    text-shadow: 1px 1px 0px rgb(58,23,63);
+    
+    width: 100%; /*This sets the width of the title element to 100% of the parent element .hero-content */
+    text-align: center; /* This will center the text for this element, and since it is 100% the width of the parent element, it will center it in hero-content */
+    font-size: 4rem; /* This will set the text size of this class. Note it will override the default of HTML <h5> tag */
+    font-weight: 300; /* This defines the font weight, which is one of the given font weights from the Open Sans font we downloaded. Note that if we used a value that was not downloaded, it will default to different text */
+    text-transform: uppercase; /*Transform our text into uppercase letters */
+    letter-spacing: 0.5rem; /* This sets the spacing between letters */
+    text-shadow: 1px 1px 0px rgb(58,23,63); /* This sets a text shadow. This uses the following format - text-shadow: h-shadow v-shadow blur-radius color. Color can be set to none,  */
     
 }
-
 
 .navbar .logo {
 /* This is a dependant selector. This will apply changes to the .logo classes which are within a .navbar class. It is important to seperate them with a space */
@@ -71,4 +103,7 @@ body.landing {
     left: 2rem;
 }
 
+.point .point-title {
+    font-size: 1.25rem;
+}
 
