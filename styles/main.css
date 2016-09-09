@@ -43,3 +43,36 @@ body {
     left: 2rem;
 }
 
+/*Media selector for medium screens (min 640px)*/
+
+.container {
+    margin: 0 auto; /* Recall syntax, 0 is top/bottom and auto is left/right margin */
+    max-width: 64rem;
+}
+
+@media (min-width: 640px) {
+/*This media selection will increase the font size in our HTML element. It will apply when the rule specified in brackets is set to true (boolean). It is dynamic (note if you move the window it will see the effect). Normal cascading rules apply, so a selector should always be placed under the element it is changing... or use a stronger specificity. Another note is that when changing font size in the HTML element you cannot use a relative unit because there is no parent to relate to. Note that in most browsers the default size for REM is usually 16 pixels. Finally, while we do not use it here, it is possible to use boolean logic operators to apply a condition only when a set of conditions are met. Logical and and , (here , represents or) */    
+    html { font-size: 112%; }
+    
+    /* Responsive web development uses a grid system to set divisions on a page based on common proportions. Bootstrap and Foundation use popular grid systems, but we will design our own here. Grids change in layout based on device breakpoints (which we defined with the @media selector. Here we are adding the column class */
+    .column {
+        float: left; /* Float tells element to float along the left or right side of its container, where text and other inline elements can wrap around it. */
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /*These define our column widths for our new columns */
+    .column.full { width: 100%; }
+    .column.two-thirds { width: 66.7%; }
+    .column.half { width: 50%; }
+    .column.third { width: 33.3%; }
+    .column.fourth { width: 25%; }
+    .column.flow-opposite { float: right; } 
+
+}
+
+/*Media selector for large screens (min 1024px)*/
+@media (min-width: 1024px) {
+    html { font-size: 120%;} 
+}
+

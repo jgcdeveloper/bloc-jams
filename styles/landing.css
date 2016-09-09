@@ -39,14 +39,11 @@ body.landing {
 
 .selling-points {
     position: relative; /* Again, sets the position as relative, so it is in the flow, but can be used to create coordinates */
-    display: table; /*allows the element to act like a table tag, which will allow us to set child elements to act as table cells, and be spaced as such */
-    width: 100%; /* Sets the selling point section to 100% width of the parent element. In this case the parent for width is the body */
-}
+ }
 
 .point {
-    display: table-cell; /* Allows the element to work like a TD element. */
+    
     position: relative; /* Sets the position of point to relative, which is in the flow of the parent element, in this case, all the div points are in the selling points section */
-    width: 33.3%; /* Width of the element will be set to 33.3% of the parent element. Since we have this acting like a table cell, the cell will now have a width of 33.3% */
     padding: 2rem; /* This adds padding around the box to give some space for the text. */
     text-align: center; /* This will text align center */
 }
