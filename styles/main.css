@@ -33,15 +33,51 @@ body {
 
 .navbar {
     /* rem stands for Root em. It is a relative unit for calculating size of an element. em is defined by the width of 'm' in a particlar font. The root em is based on the font size of the root element, in this case the HTML parent. Rem is useful for element sizing  */
+    position: relative;
     padding: 0.5rem;
-    background-color: rgb(101,18,95);
+    background-color: rgba(101,18,95,0.5); /* The last alpha channel specifies opacity */
+    z-index: 1; /*Used for creating stack order. When overlapping, higher z-index items will be in front of those with a lower stack order */
 }
 
 .navbar .logo {
 /* This is a dependant selector. This will apply changes to the .logo classes which are within a .navbar class. It is important to seperate them with a space */
     position: relative;
     left: 2rem;
+    cursor: pointer; /* This will change our cursor to a hand pointer icon when it is over the element*/
 }
+
+ .navbar .links-container {
+     /* This will be the element box used to contain the links */
+     display: table; /* will display as a table style element */
+     position: absolute; /* take an absolute position within the parent (nav) element */
+     top: 0; /* will position with an offset of zero from the top of the .navbar coordinates */
+     right: 0; /* will position with an offset of zero from the right of the .navbar coordinates */
+     height: 100px; /* links container will have a height of 100 px */
+     color: white; /* text color for this element will be white */
+     text-decoration: none; /*changes how the text is displayed by default. Normally href is underlined, so ths will remove the underline from the href links */
+ }
+ 
+ .links-container .navbar-link {
+     /* This will change the actual link element */
+     display: table-cell; /* This will act as a cell for the parent <div class link container> */
+     position: relative; /* This element box will take a relative positon */
+     height: 100%; /* This link will maintain a height of 100% of it's parent element */
+     padding-left: 1rem;
+     padding-right: 1rem;
+     vertical-align: middle; /* Adds a vertical alignment for the middle of the containing element */
+     color: white; /*Again gives a value for the text color*/
+     font-size: 0.625rem; /*reduces the font size for the collation link */
+     letter-spacing: 0.05rem; /*reduces the letter spacing for this element */
+     font-weight: 700; /*specifies a greater font weight then default element */
+     text-transform: uppercase; /*makes sure the link names are always uppercase */
+     text-decoration: none; /*again makes sure that the href is not underlined */
+     cursor: pointer; /*again trasnforms our cursor into a finger */
+ }
+
+.links-container .navbar-link:hover {
+/*calls the hover psuedo class, which allows for the element to change when mouse is hovering over the element*/ 
+    color: rgb(233,50,117); /*changes element color when hovering*/
+ }
 
 /*Media selector for medium screens (min 640px)*/
 
