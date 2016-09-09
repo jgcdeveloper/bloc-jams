@@ -1,0 +1,40 @@
+ body.collection {
+     background-image: url(../assets/images/blurred_backgrounds/blur_bg_2.jpg);
+     background-repeat: no-repeat; /*If image is smaller then screensize, dont repeat image */
+     background-attachment: fixed; /*Background image is fixed and will not scroll with user */
+     background-position: center center; /* background is in center position */
+     background-size: cover; /* Auto scales our background image to cover the whole collection page */ 
+ }
+ 
+ .album-covers {
+     position: relative; /*Sets album cover to relative position*/
+ }
+ 
+ .collection-album-container {
+     position: relative; /* Again sets relative position */
+     margin-top: 30px;
+     margin-bottom: 20px;
+     text-align: center;
+ }
+ 
+ .collection-album-container .caption {
+     margin-top: 10px; /* Adds some space via top margin between album covers and our caption */
+ }
+ 
+ .collection-album-container .caption p {
+     font-size: 1rem;
+     font-weight: 300;
+     color: rgba(255, 255, 255, 0.6);
+ }
+ 
+ .collection-album-container .caption p a {
+     color: rgba(255, 255, 255, 0.6);
+ }
+ 
+ .collection-album-container .caption p a.album-name {
+     color: white;
+ }
+ 
+ .collection-album-container img {
+     width: 80%;
+ }

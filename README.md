@@ -1,5 +1,5 @@
 # bloc-jams
-Bloc-Jams Capstone Learning Project
+Bloc-Jams Discovery Project
 
 This is the first learning project done for my Bloc.io Software Developer Course. 
 In it, I will deal with HTML, CSS, and JavaScript.
