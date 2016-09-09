@@ -76,3 +76,15 @@ body {
     html { font-size: 120%;} 
 }
 
+/* This will apply a clearfix to make sure elements following the float elements to make sure elements do not get pushed up into the element containing floated elements. It basically works by using ::after to add a single space as a table after any content in the class. It then pushes that element down and clears the float on both sides, so we can be assured that the next element will not flow up into the floats before it */
+
+*/
+.clearfix::before, 
+.clearfix::after {
+    content: " ";
+    display: table;
+}
+
+.clearfix::after {
+    clear: both;
+}
