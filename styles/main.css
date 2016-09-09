@@ -79,6 +79,12 @@ body {
     color: rgb(233,50,117); /*changes element color when hovering*/
  }
 
+.links-container .navbar-link:active {
+/*calls the active psuedo class, which allows for the element to change when mouse between when the mouse is clicked and released on the element. As per the MDN document, this has to go below the subsequent links for hover in order to operate properly.  */
+    color: rgb(233,50,117); /*maintains text color to what is shown when hovering*/
+    background-color: white;
+ }
+
 /*Media selector for medium screens (min 640px)*/
 
 .container {
