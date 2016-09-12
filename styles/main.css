@@ -86,6 +86,11 @@ body {
     max-width: 64rem;
 }
 
+.container.narrow {
+/* Remeber that no space means any element that has the same two classes, where as if it were a space it would indicate looking for a child element */  
+    max-width: 56rem;
+}
+
 @media (min-width: 640px) {
 /*This media selection will increase the font size in our HTML element. It will apply when the rule specified in brackets is set to true (boolean). It is dynamic (note if you move the window it will see the effect). Normal cascading rules apply, so a selector should always be placed under the element it is changing... or use a stronger specificity. Another note is that when changing font size in the HTML element you cannot use a relative unit because there is no parent to relate to. Note that in most browsers the default size for REM is usually 16 pixels. Finally, while we do not use it here, it is possible to use boolean logic operators to apply a condition only when a set of conditions are met. Logical and and , (here , represents or) */    
     html { font-size: 112%; }
