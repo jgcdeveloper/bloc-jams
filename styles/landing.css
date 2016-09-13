@@ -46,6 +46,7 @@ body.landing {
     position: relative; /* Sets the position of point to relative, which is in the flow of the parent element, in this case, all the div points are in the selling points section */
     padding: 2rem; /* This adds padding around the box to give some space for the text. */
     text-align: center; /* This will text align center */
+    
     opacity: 0; /*Opacity zero makes the point element transparent*/
     
     /*These three fuctions do the same thing,but use vendor tags to support more browser versions */
