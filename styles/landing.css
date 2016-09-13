@@ -50,19 +50,19 @@ body.landing {
     opacity: 0; /*Opacity zero makes the point element transparent*/
     
     /*These three fuctions do the same thing,but use vendor tags to support more browser versions */
-    -webkit-transform: scaleX(0.9) translateY(3rem); /*scaleX - scale 90% along the X (horz) axis */
-    -moz-transform: scaleX(0.9) translateY(3rem); /* translateY - move 3rem down  Y (vert) axis */
-    transform: scaleX(0.9) translateY(3rem);
+    -webkit-transform: scaleX(0.8) translateY(5rem); /*scaleX - scale 90% along the X (horz) axis */
+    -moz-transform: scaleX(0.8) translateY(5rem); /* translateY - move 3rem down  Y (vert) axis */
+    transform: scaleX(0.8) translateY(5rem);
     
     /*This function has four unique values, we are using three. all indicates to transition all properties of the element. 0.25s indicates how long we want the transition to take. ease-in-out defines our timing function. It starts slow, accelerates in the middle, and slows at the end. There are many different timing function, or we can write our own. REF: https://developer.mozilla.org/en-US/docs/Web/CSS/timing-function */
-    -webkit-transition: all 0.25s ease-in-out;
-    -moz-transition: all 0.25s ease-in-out;
-    transition: all 0.25s ease-in-out;
+    -webkit-transition: all 0.5s cubic-bezier(0.42, 0.0, 0.58, 1.); /* Bezler Curve definition */
+    -moz-transition: all 0.5s cubic-bezier(0.42, 0.0, 0.58, 1.0); 
+    transition: all 0.5s cubic-bezier ease-in-out;
     
     /* This tells how long the function can wait to delay the transition by 0.2 seconds. Again vendor tags for full support of transitions */
-    -webkit-transition-delay: 0.2s;
-    -moz-transition-delay: 0.2s;
-    transition-delay: 0.2s;
+    -webkit-transition-delay: 0.25s;
+    -moz-transition-delay: 0.25s;
+    transition-delay: 0.25s;
     
 }
 
