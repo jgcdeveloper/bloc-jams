@@ -100,6 +100,9 @@
             </div>
            
         </section>
+        
+        <!-- When activiating scripts in page, it is important to remember that JS can be slower to load. Since our page runs from the top, it is better to put script at the end of the page, otherwise the page could load slowly or the JS could call elements that haven't been loaded yet, causing problems &| bugs -->
+        <script src = "scripts/landing.js"></script>
 
     </body>
 
