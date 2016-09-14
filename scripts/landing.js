@@ -2,22 +2,19 @@ var animatePoints = function () {
             
     /* This creates an array of element nodes (called a NodeList) of the .point class elemets. We can then access the individual element using index notation */
     var points = document.getElementsByClassName('point');
-            
     
-
-    /* When these are written into the CSS, they will animate between the two states using the transition coding in the CSS file. */
-
+    
+    var revealPoint = function(pointIndex){
     /* When these are written into the CSS, they will animate between the two states using the transition coding in the CSS file. No return, so we are calling this function for it's side effects only */
-    
-    var revealPoint = function(arr){
-        for(var i = 0; i < arr.length; i++){
-            points[i].style.opacity = 1;
-            points[i].style.transform = "scaleX(1) translateY(0)";
-            points[i].style.msTransform = "scaleX(1) translateY(0)";
-            points[i].style.WebkitTransform = "scaleX(1) translateY(0)";    
-        }    
+        points[pointIndex].style.opacity = 1;
+        points[pointIndex].style.transform = "scaleX(1) translateY(0)";
+        points[pointIndex].style.msTransform = "scaleX(1) translateY(0)";
+        points[pointIndex].style.WebkitTransform = "scaleX(1) translateY(0)";
     };
-    
+
+    for(var i = 0; i < points.length; i++){
+        revealPoint(i);    
+    }
     
     /* Old code changed for Assignment 08 - Left for reference for checkpoint 08. Can be removed
     once submission has been approved.
@@ -55,5 +52,5 @@ var animatePoints = function () {
     
     */
     
-    revealPoint(points);
+    
 };
