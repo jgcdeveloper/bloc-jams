@@ -1,21 +1,26 @@
 var pointsArray = document.getElementsByClassName("point");
 /* This will return a node list of all nodes that have the class name "point". While it is stored and accessed like an array (index notation), a node list does not have access to Array prototype functionality */
 
-var animatePoints = function (points) {
-/* We are defining animatePoints as a function which will initiate the animation we want for our points elements. */          
-       
-    var revealPoint = function(pointIndex){
+var revealPoint = function(currentPoint){
     /* When these are written into the CSS, they will animate between the two states using the transition coding in the CSS file. No return, so we are calling this function for it's side effects only */
-        points[pointIndex].style.opacity = 1;
-        points[pointIndex].style.transform = "scaleX(1) translateY(0)";
-        points[pointIndex].style.msTransform = "scaleX(1) translateY(0)";
-        points[pointIndex].style.WebkitTransform = "scaleX(1) translateY(0)";
-    };
+        currentPoint.style.opacity = 1;
+        currentPoint.style.transform = "scaleX(1) translateY(0)";
+        currentPoint.style.msTransform = "scaleX(1) translateY(0)";
+        currentPoint.style.WebkitTransform = "scaleX(1) translateY(0)";
+};
 
-    for(var i = 0; i < points.length; i++){
-    /* This will set a loop to reveal the three points automatically by calling them upon execution of function */
-        revealPoint(i);    
-    }
+var animatePoints = function(myPoints) {
+/* We are defining animatePoints as a function which will initiate the animation we want for our points elements. When we call animatePoints, we need to pass in the array we are calling for. */          
+    forEach(myPoints, revealPoint);
+    /* This is a callback. A callback is when we call a function, and in that call we send in another function as an argument. Here, we call function forEach, and send in function revealPoint as our callback.
+    
+    This will call my forEach function in utilities.js. It will call that function sending in two arguments, myPoints, which we have passed in as an argument when animatePoints was called, and revealPoint as the callback function. 
+    
+    These two are sent to the forEach function in utilities.js. In utilities.js, we get the length of pointsArray to control our loop. The loop then executes the callback function revealPoint, passing in the current array element controlled by the loop to revealPoint, and executing it. (myArray[1] in the forEach function, but since we passed in pointsArray the actual value in this example is pointsArray[i] ) 
+    
+    So flow is: call animatePoints function => calls forEach function => forEach loops 3 times, and during each loop it calls => revealPoint function, which uses loop control to => pass transition code to that element node in the CSS.
+    
+    */
     
 };
 
