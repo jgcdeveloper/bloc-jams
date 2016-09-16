@@ -31,6 +31,23 @@ var albumMarconi = {
     ]
 };
 
+//Second Example Album created with Object Literals
+var albumEssentialTchaikovsky = {
+    title: 'Essential Tchaikovsky - Disc 1: Part A',
+    artist: 'Peter Ilyich Tchaikovsky',
+    label: 'Decca',
+    year: '2002',
+    albumArtUrl: 'assets/images/album_covers/22.png',
+    songs: [
+        { title: 'Tchaikovsky: Piano Concerto No.1 In B Flat Minor, Op.23, TH.55 - 1. Allegro non troppo e molto maestoso', duration: '9:04' },
+        { title: 'Tchaikovsky: Romeo and Juliet, Fantasy Overture - TH.42 - Love Theme', duration: '5:01' },
+        { title: 'Tchaikovsky: Symphony No. 6 In B Minor, Op. 74, TH.30 - 1. Adagio - Allegro non troppo (excerpt)', duration: '2:35'},
+        { title: 'Tchaikovsky: Swan Lake, Op.20 Suite - 1. Scene - Swan Theme', duration: '7:09' },
+        { title: 'Tchaikovsky: Swan Lake, Op.20 Suite - 3. Danse des petits cygnes', duration: '1:30'},
+        { title: 'Tchaikovsky: Sextet in D minor, Op.70 - "Souvenir de Florence"', duration: '7:50'}
+    ]
+};
+
 var createSongRow = function(songNumber,songName,songLength){
     var listTemplate = 
         '<tr class="album-view-song-item">'
