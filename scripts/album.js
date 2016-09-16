@@ -33,7 +33,7 @@ var albumMarconi = {
 
 //Second Example Album created with Object Literals
 var albumEssentialTchaikovsky = {
-    title: 'Essential Tchaikovsky - Disc 1: Part A',
+    title: 'Essential Tchaikovsky',
     artist: 'Peter Ilyich Tchaikovsky',
     label: 'Decca',
     year: '2002',
@@ -82,9 +82,24 @@ var createSongRow = function(songNumber,songName,songLength){
      //We call a for loop to cycle through all the songs(titles/durations) and pass them to create row template
      for (var i = 0; i < album.songs.length; i++) {
          albumSongList.innerHTML += createSongRow(i + 1, album.songs[i].title, album.songs[i].duration);
+     
      }
+     
  };
- 
- window.onload = function() {
-     setCurrentAlbum(albumPicasso);
+//Set global variables to control album is display. First we have a list of albums in an array. Second we have the name of the album we wish to display first. Third is the index of that variable in the array. Note that this is what the function will increment upon call to change which album displayed.
+
+var albumList = [albumPicasso,albumMarconi,albumEssentialTchaikovsky], 
+    displayFirst = albumPicasso,
+    albumIndex = albumList.indexOf(displayFirst)  
+;
+
+var changeAlbum = function(){
+    (albumIndex == albumList.length-1 ? albumIndex = 0 : albumIndex++ ) //resets the loop once we are at array end
+    setCurrentAlbum(albumList[albumIndex]); //trigger the new album to display   
+};
+
+ window.onload = function(){
+     setCurrentAlbum(albumList[albumIndex]);
+     /*This is the listener I add to the album art, so that clicking on it will change the album that is displayed*/
+     document.getElementsByClassName('album-cover-art')[0].addEventListener("click", changeAlbum);
  };
