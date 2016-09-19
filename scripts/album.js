@@ -33,7 +33,7 @@ var albumMarconi = {
 
 var createSongRow = function(songNumber,songName,songLength){
     var listTemplate =
-        '    <tr class="album-view-song-item">'
+        '<tr class="album-view-song-item">'
         //Here we use a data attribute to store the ' + songNumber + ' into a data attribute that can be retreived at a later time. Because we overwrite the innerHTML to place the play button, the data attribute will remain for retrieval later.     
       + '    <td class="song-item-number" data-song-number="' + songNumber + '">' + songNumber + '</td>'
       + '    <td class="song-item-title">' + songName + '</td>'
@@ -68,35 +68,135 @@ var createSongRow = function(songNumber,songName,songLength){
          albumSongList.innerHTML += createSongRow(i + 1, album.songs[i].title, album.songs[i].duration);
      }
  };
- 
+
+
+var findParentByClassName = function(targetClass, element) {
+    if (element) {
+        var currentParent = element.parentElement;
+        while (currentParent.className != targetClass && currentParent.className !== null) {
+            currentParent = currentParent.parentElement;
+        }
+        return currentParent;
+    }
+};
+
+/*
+var findParentByClassName = function(targetToFind, elementToSearch) {
+    var theParentIs = elementToSearch.parentElement;
+    while (currentParent.className != targetToFind) {
+        currentParent = currentParent.parentElement;
+    }
+    return theParentIs;
+};
+*/
+
+var getSongItem = function(element){
+    console.log(element.classname);
+    
+    switch(element.className) {
+        //#1 - These three are the childs of the 'song-item-number' class, if we find these, we need to go up to the parent element
+        case "ion-play":
+        case "ion-pause":
+        case "album-song-button":
+            return findParentByClassName("song-item-number", element);    
+        
+        //#2 - This is the parent row, we have called this album-view-song-item. If we find this, we need to select the child song-item-number. We can do this with a querySelector.
+        case "album-view-song-item" :
+            return element.querySelector(".song-item-number");
+        
+        //#3 - These are the other table data elements. If we find them, we need to find their parent, which will be the containing table (album-view-song-item). Then we need to select the actual child we want, which is "song-item-number".
+        case "song-item-duration":
+        case "song-item-title":
+            return ( findParentByClassName("album-view-song-item", element) ).querySelector(".song-item-number");
+        
+        //#4 - This case is if we actually click on the correct element. Claim a prize.
+        case "song-item-number":
+            return element;
+        
+        //#5 - A default case if the songItem cannot be found.
+        default:
+            alert("Something went wrong... call your friendly neighbourhood coder");
+            return;
+    }
+};
+
+var clickHandler = function(targetElement) {
+
+     var songItem = getSongItem(targetElement);
+
+     if (currentlyPlayingSong === null) {
+         songItem.innerHTML = pauseButtonTemplate;
+         currentlyPlayingSong = songItem.getAttribute('data-song-number');
+         
+     } else if (currentlyPlayingSong === songItem.getAttribute('data-song-number')) {
+         songItem.innerHTML = playButtonTemplate;
+         currentlyPlayingSong = null;
+         
+     } else if (currentlyPlayingSong !== songItem.getAttribute('data-song-number')) {
+         var currentlyPlayingSongElement = document.querySelector('[data-song-number="' + currentlyPlayingSong + '"]');
+         currentlyPlayingSongElement.innerHTML = currentlyPlayingSongElement.getAttribute('data-song-number');
+         songItem.innerHTML = pauseButtonTemplate;
+         currentlyPlayingSong = songItem.getAttribute('data-song-number');
+     }
+};
+
+
 var SongListContainer = document.getElementsByClassName('album-view-song-list')[0];
 // Creates a container to hold our pointer to get the first instance of 'album-view-song-list'
+
 var songRows = document.getElementsByClassName('album-view-song-item');
 
 var playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></span></a>';
 // This adds the 'ion-play' playbutton icon to our playButtonTemplate. 
+
+var pauseButtonTemplate = '<a class="album-song-button"><span class="ion-pause"></span></a>';
+//This adds the pause button template which we will use while a song is playing. Note, as per the video color scheming will be similar to the play button, so we will give this the same class name as our play button. That way the way the buttons will keep the same color scheme.
+
+ var currentlyPlayingSong = null;
 
 window.onload = function() {
     setCurrentAlbum(albumPicasso);
     
     SongListContainer.addEventListener('mouseover', function(event){
     //add a mouseover event listener to our album-view-song-list class. Event will fire whenever mousing over any element in album-view-song-list
-        //console.log(event.target)
-        //the target property stores where the event occured. As you mouse over the element, element where event is dispached will be displayed
-        
-        if (event.target.parentElement.className === 'album-view-song-item') {
-        //This restricts the event target only to the individual song rows    
-            event.target.parentElement.querySelector('.song-item-number').innerHTML = playButtonTemplate;
-            //This changes the content of the inner HTML for song-item-number to our playButtonTemplate. We use querySelector as this will only select one element at a time 
+      
+        //This restricts the event target only to the individual song rows  
+        if(event.target.parentElement.className === 'album-view-song-item') {
+            
+            var songItem = getSongItem(event.target);
+            
+            if(songItem.getAttribute("data-song-number") !== currentlyPlayingSong){
+                songItem.innerHTML = playButtonTemplate;
+            }
+          
+       
          }
-   
+        
     });
- 
+    
+    document.getElementsByClassName("song-item-number")[1].addEventListener('click', function(event){
+        console.log(event.target);    
+    });
+    
     for (var i = 0; i < songRows.length; i++) {
-        songRows[i].addEventListener('mouseleave', function(event) {
-        //This loop will add a mouseleave listener to all elements with a album-view-song-item class 
+        songRows[i].addEventListener("mouseleave", function(event) {
+            
+            var songItem = getSongItem(event.target);
+            var songItemNumber = songItem.getAttribute('data-song-number');
+            
+            if (songItemNumber !== currentlyPlayingSong){
+                songItem.innerHTML = songItemNumber;
+             }
+            
+            /* Old code left for reference
+            //This loop will add a mouseleave listener to all elements with a album-view-song-item class 
             this.children[0].innerHTML = this.children[0].getAttribute('data-song-number');
-            //This will overwrite the innerHTML with what we stored in the data attribute data-song-number, which was the original content before changing the button. We acces the first child element. 
+            //This will overwrite the innerHTML with what we stored in the data attribute data-song-number, which was the original content before changing the button. We acces the first child element.
+            */
+        });
+        
+        songRows[i].addEventListener("click", function(event){
+            clickHandler(event.target);    
         });
      }
 }
