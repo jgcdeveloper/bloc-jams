@@ -50,6 +50,7 @@ body.album{
  
 .song-item-number {
     width: 5%;
+    min-width: 30px; /* This minimum width is added to accomidate the song button, so we dont shrink smaller */
 }
  
 .song-item-title {
@@ -59,6 +60,32 @@ body.album{
 .song-item-duration {
     width: 5%;
 }
+
+.album-song-button {
+/* This adds property to our new song play button*/
+    text-align: center;
+    font-size: 14px;
+    background-color: white;
+    color: rgb(210, 40, 123);
+    border-radius: 50% 50%;
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+ }
+ 
+.album-song-button:hover {
+/* This adds property to our new song play button when hovering over it*/    
+    cursor: pointer;
+    color: white;
+    background-color: rgb(210, 40, 123);
+ }
+ 
+ .album-song-button span {
+/* This adds a line height minimum for the play button class sub element of span */
+     line-height: 28px;
+ }
+
+
 
 @media (max-width: 640px) and (min-width: 320px) {
 /* For medium view devices, center text and reduce top margin */

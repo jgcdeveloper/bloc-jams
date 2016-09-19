@@ -32,9 +32,10 @@ var albumMarconi = {
 };
 
 var createSongRow = function(songNumber,songName,songLength){
-    var listTemplate = 
-        '<tr class="album-view-song-item">'
-      + '    <td class="song-item-number">' + songNumber + '</td>'
+    var listTemplate =
+        '    <tr class="album-view-song-item">'
+        //Here we use a data attribute to store the ' + songNumber + ' into a data attribute that can be retreived at a later time. Because we overwrite the innerHTML to place the play button, the data attribute will remain for retrieval later.     
+      + '    <td class="song-item-number" data-song-number="' + songNumber + '">' + songNumber + '</td>'
       + '    <td class="song-item-title">' + songName + '</td>'
       + '    <td class="song-item-duration">' + songLength + '</td>'
       + '</tr>'
@@ -68,6 +69,34 @@ var createSongRow = function(songNumber,songName,songLength){
      }
  };
  
- window.onload = function() {
-     setCurrentAlbum(albumPicasso);
- };
+var SongListContainer = document.getElementsByClassName('album-view-song-list')[0];
+// Creates a container to hold our pointer to get the first instance of 'album-view-song-list'
+var songRows = document.getElementsByClassName('album-view-song-item');
+
+var playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></span></a>';
+// This adds the 'ion-play' playbutton icon to our playButtonTemplate. 
+
+window.onload = function() {
+    setCurrentAlbum(albumPicasso);
+    
+    SongListContainer.addEventListener('mouseover', function(event){
+    //add a mouseover event listener to our album-view-song-list class. Event will fire whenever mousing over any element in album-view-song-list
+        //console.log(event.target)
+        //the target property stores where the event occured. As you mouse over the element, element where event is dispached will be displayed
+        
+        if (event.target.parentElement.className === 'album-view-song-item') {
+        //This restricts the event target only to the individual song rows    
+            event.target.parentElement.querySelector('.song-item-number').innerHTML = playButtonTemplate;
+            //This changes the content of the inner HTML for song-item-number to our playButtonTemplate. We use querySelector as this will only select one element at a time 
+         }
+   
+    });
+ 
+    for (var i = 0; i < songRows.length; i++) {
+        songRows[i].addEventListener('mouseleave', function(event) {
+        //This loop will add a mouseleave listener to all elements with a album-view-song-item class 
+            this.children[0].innerHTML = this.children[0].getAttribute('data-song-number');
+            //This will overwrite the innerHTML with what we stored in the data attribute data-song-number, which was the original content before changing the button. We acces the first child element. 
+        });
+     }
+}
