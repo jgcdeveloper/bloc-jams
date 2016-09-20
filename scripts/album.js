@@ -70,25 +70,21 @@ var createSongRow = function(songNumber,songName,songLength){
  };
 
 
-var findParentByClassName = function(targetClass, element) {
-    if (element) {
-        var currentParent = element.parentElement;
-        while (currentParent.className != targetClass && currentParent.className !== null) {
+var findParentByClassName = function(targetToFind, elementToSearch) {
+    if (elementToSearch) {
+    //Will only execute the code if the element passed to the code exists. I did not do this in my original implimentation but I understand why.
+        var currentParent = elementToSearch.parentElement;
+        //sets the currentParent = the parent of the current element passed into the function.
+        
+        while (currentParent.className != targetToFind && currentParent.className !== null) {
+        //If that parentName is not equal to our target class to find, the while loop will execute, and it will keep going up the chain of parents until the element matches the target element. Also, once it gets to the top, if you return on the topmost element, you will see a null, so it also will only execute the loop as long as there is not a null in currentParent. This is the second part of the implimentation I did not get on my initial attempt.
+            
             currentParent = currentParent.parentElement;
+            //Looks up the DOM elements, each time getting the parent of the one before it until the loop stops.
         }
         return currentParent;
     }
 };
-
-/*
-var findParentByClassName = function(targetToFind, elementToSearch) {
-    var theParentIs = elementToSearch.parentElement;
-    while (currentParent.className != targetToFind) {
-        currentParent = currentParent.parentElement;
-    }
-    return theParentIs;
-};
-*/
 
 var getSongItem = function(element){
     console.log(element.classname);
@@ -122,80 +118,79 @@ var getSongItem = function(element){
 
 var clickHandler = function(targetElement) {
 
-     var songItem = getSongItem(targetElement);
-
-     if (currentlyPlayingSong === null) {
+    var songItem = getSongItem(targetElement);
+    //As this is called from a click handler, the event target will be passed in. This will then find the current song-item-number for whatever element was clicked and store it in the songItem variable.
+    
+    if (currentlyPlayingSong === null) {
+    //If no song is playing, clicking on the row will start playing the song (to be added) and place a pause button. It will also store the current song number into the global currentlyPlayingSong variable.
          songItem.innerHTML = pauseButtonTemplate;
          currentlyPlayingSong = songItem.getAttribute('data-song-number');
          
-     } else if (currentlyPlayingSong === songItem.getAttribute('data-song-number')) {
+    } else if (currentlyPlayingSong === songItem.getAttribute('data-song-number')) {
+    //If the row is clicked on matches the currently playing song, the playing song will stop, the play button template will be replaced, and the currentlyPlayingSong is placed back to null. Actually, its more like a stop button, not a pausebutton.
          songItem.innerHTML = playButtonTemplate;
          currentlyPlayingSong = null;
          
-     } else if (currentlyPlayingSong !== songItem.getAttribute('data-song-number')) {
+    } else if (currentlyPlayingSong !== songItem.getAttribute('data-song-number')) {
+    //If we click on a different row while a song is playing on another row, we create a new variable to store the currently playing song element location. We then overwrite that element with the generic number, basically reverting it to normal. Then we call the pauseButtonTemplate on the new row. Finally, we push to the currentlyPlayingSong variable with the new song number that we are playing.
          var currentlyPlayingSongElement = document.querySelector('[data-song-number="' + currentlyPlayingSong + '"]');
          currentlyPlayingSongElement.innerHTML = currentlyPlayingSongElement.getAttribute('data-song-number');
          songItem.innerHTML = pauseButtonTemplate;
          currentlyPlayingSong = songItem.getAttribute('data-song-number');
-     }
+    }
 };
 
 
 var SongListContainer = document.getElementsByClassName('album-view-song-list')[0];
-// Creates a container to hold our pointer to get the first instance of 'album-view-song-list'
+// Creates a container to hold our pointer to get the first instance of our table => 'album-view-song-list'
 
 var songRows = document.getElementsByClassName('album-view-song-item');
+// Creates a list of all the song rows. Note we created our <tr> with the class 'album-view-song-item'
 
 var playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></span></a>';
-// This adds the 'ion-play' playbutton icon to our playButtonTemplate. 
+// This adds the 'ion-play' playbutton icon to our playButtonTemplate. This is part of the ionian library. 
 
 var pauseButtonTemplate = '<a class="album-song-button"><span class="ion-pause"></span></a>';
 //This adds the pause button template which we will use while a song is playing. Note, as per the video color scheming will be similar to the play button, so we will give this the same class name as our play button. That way the way the buttons will keep the same color scheme.
 
- var currentlyPlayingSong = null;
+var currentlyPlayingSong = null;
 
 window.onload = function() {
     setCurrentAlbum(albumPicasso);
     
-    SongListContainer.addEventListener('mouseover', function(event){
+    SongListContainer.addEventListener("mouseover", function(event){
     //add a mouseover event listener to our album-view-song-list class. Event will fire whenever mousing over any element in album-view-song-list
-      
-        //This restricts the event target only to the individual song rows  
-        if(event.target.parentElement.className === 'album-view-song-item') {
+        
+        if(event.target.parentElement.className === "album-view-song-item") {
+        //This line does a check. It lookts to see if the currently selected event.target has a parent element of "album-view-song-item" (the class of our table row). Therefore, the code inside the if block will only execute for elements with that parent. So this effect will only occur for the table row element and its children.
             
             var songItem = getSongItem(event.target);
+            //Takes the target element from the Event Listener, and calls getSongItem. This will point towards the song-item-number element of the current row when mousing over ANY element on that row.
             
             if(songItem.getAttribute("data-song-number") !== currentlyPlayingSong){
+            //This will get the attribute of the currently selected song-item-number and compare to what is stored in the currentlyPlayingSong variable. If the contents do not match, we will return TRUE and the IF code will execute to change the innerHTML of the songItem to be the play button. If it is the currently playing song, there should be a pause button in this spot, and we do not want to overwrite that, so the if code will not execute. 
                 songItem.innerHTML = playButtonTemplate;
             }
-          
-       
-         }
-        
-    });
-    
-    document.getElementsByClassName("song-item-number")[1].addEventListener('click', function(event){
-        console.log(event.target);    
+        }
     });
     
     for (var i = 0; i < songRows.length; i++) {
+    //This will create a loop equal to the number of song rows we have    
         songRows[i].addEventListener("mouseleave", function(event) {
-            
-            var songItem = getSongItem(event.target);
-            var songItemNumber = songItem.getAttribute('data-song-number');
+        //This will create an Event Listener for all current song rows. When the mouseleave event fires, the function is called.
+            var songItem = getSongItem(event.target),
+                songItemNumber = songItem.getAttribute("data-song-number");
+            //sontgtem will store the specific song-item-number for the event that has been fired, and sontItemNumber will then store the data attribute from that specific song-iten-number for comparison.
             
             if (songItemNumber !== currentlyPlayingSong){
+            //we compare what is in our songItemNumber with what is currently playing. If they match, then the IF code will not execute, and the innerHTML of our current songItem will not be overwritten. Therefore, if we have a pause button, leaving the area will not delete it by replacing it with the stored data-song-number value    
                 songItem.innerHTML = songItemNumber;
              }
             
-            /* Old code left for reference
-            //This loop will add a mouseleave listener to all elements with a album-view-song-item class 
-            this.children[0].innerHTML = this.children[0].getAttribute('data-song-number');
-            //This will overwrite the innerHTML with what we stored in the data attribute data-song-number, which was the original content before changing the button. We acces the first child element.
-            */
         });
         
         songRows[i].addEventListener("click", function(event){
+        //This simple line of code actually handles our click event. Upon clicking, we will call a function that will do one of several things.
             clickHandler(event.target);    
         });
      }
