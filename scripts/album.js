@@ -71,13 +71,8 @@ var createSongRow = function(songNumber,songName,songLength){
 
 
 var findParentByClassName = function(targetToFind, elementToSearch) {
-    if(!elementToSearch) { 
-    //checks to see if the element called exists. If not alerts error message.    
-        
-        alert("This element does not exist");
-        return;
-        
-    } else if (elementToSearch.parentElement == null) {
+    
+    if (elementToSearch.parentElement == null) {
     //checks to see if the element called has a parent. If not alerts error message.
         
         alert("No parent found");
@@ -87,22 +82,25 @@ var findParentByClassName = function(targetToFind, elementToSearch) {
     //if the element exists, and it has a parent, we will execute this code.
     
         var currentParent = elementToSearch.parentElement;
+       
         //sets the currentParent = the parent of the current element passed into the function.
         
         while (currentParent.className != targetToFind && currentParent.className !== null) {
-        //If that parentName is not equal to our target class to find, the while loop will execute, and it will keep going up the chain of parents until the element matches the target element. Also, once it gets to the top, if you return on the topmost element, you will see a null, so it also will only execute the loop as long as there is not a null in currentParent. This is the second part of the implimentation I did not get on my initial attempt.
+        //If that parentName is not equal to our target class to find, the while loop will execute, and it will keep going up the chain of parents until the element matches the target element. Also, once it gets to the top, if you return on the topmost element, you will see a null, so it also will only execute the loop as long as there is not null stored in currentParent. This is the second part of the implimentation I did not get on my initial attempt.
             
+            if (currentParent === document.documentElement){ 
+            //every time it loops, we do a check to see if we are at the top level of the document (the HTML element, defined by .documentElement). If we are, we assume no parent was found and return the error message to the user. If we wait until next step, we get into a situation where the loop will try and execute currentParent = currentParent.parentElement on a null value, which will generate a typeOf error.
+                alert("No parent found with that class name" ); 
+                return;
+            }
             currentParent = currentParent.parentElement;
             //Looks up the DOM elements, each time getting the parent of the one before it until the loop stops.
         }
-        
-        if (currentParent.className == null){ alert("No parent found with that class name" ); }
         return currentParent;
     }
 };
 
 var getSongItem = function(element){
-    console.log(element.classname);
     
     switch(element.className) {
         //#1 - These three are the childs of the 'song-item-number' class, if we find these, we need to go up to the parent element
