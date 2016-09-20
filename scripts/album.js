@@ -71,8 +71,21 @@ var createSongRow = function(songNumber,songName,songLength){
 
 
 var findParentByClassName = function(targetToFind, elementToSearch) {
-    if (elementToSearch) {
-    //Will only execute the code if the element passed to the code exists. I did not do this in my original implimentation but I understand why.
+    if(!elementToSearch) { 
+    //checks to see if the element called exists. If not alerts error message.    
+        
+        alert("This element does not exist");
+        return;
+        
+    } else if (elementToSearch.parentElement == null) {
+    //checks to see if the element called has a parent. If not alerts error message.
+        
+        alert("No parent found");
+        return;
+    
+    } else {
+    //if the element exists, and it has a parent, we will execute this code.
+    
         var currentParent = elementToSearch.parentElement;
         //sets the currentParent = the parent of the current element passed into the function.
         
@@ -82,6 +95,8 @@ var findParentByClassName = function(targetToFind, elementToSearch) {
             currentParent = currentParent.parentElement;
             //Looks up the DOM elements, each time getting the parent of the one before it until the loop stops.
         }
+        
+        if (currentParent.className == null){ alert("No parent found with that class name" ); }
         return currentParent;
     }
 };
