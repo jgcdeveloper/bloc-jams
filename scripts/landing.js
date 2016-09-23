@@ -2,16 +2,16 @@ var animatePoints = function() {
 /* We are defining animatePoints as a function which will initiate the animation we want for our points elements. */          
        
     var revealPoint = function() {
+        
         $(this).css({
-            opacity: 1;
+            opacity: 1,
             transform: 'scaleX(1) translateY(0)'
         });
-    };
-
-    $.each($('.point'),revealPoint)
+     };
+     
+    $.each($('.point'), revealPoint);
     
 };
-
 
 $(window).load(function() {
 /* A window object represents the window containing the DOM document. It points to the document that is currently open in the window. In a tabbed browser, each tab is its own window and so is the overall window view. Some elements may reference the whole window and not the window tab, something to keep in mind */

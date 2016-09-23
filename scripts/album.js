@@ -40,32 +40,33 @@ var createSongRow = function(songNumber,songName,songLength){
       + '    <td class="song-item-duration">' + songLength + '</td>'
       + '</tr>'
       ;
-    return listTemplate;
+    return $(listTemplate);
 };
 
  var setCurrentAlbum = function(album) {
      
      // Add our selectors for 5 main elements into the function (improve readibility). Note we will only have one album per page, so we select the first node with our class selector using [0]
-     var albumTitle = document.getElementsByClassName('album-view-title')[0];
-     var albumArtist = document.getElementsByClassName('album-view-artist')[0];
-     var albumReleaseInfo = document.getElementsByClassName('album-view-release-info')[0];
-     var albumImage = document.getElementsByClassName('album-cover-art')[0];
-     var albumSongList = document.getElementsByClassName('album-view-song-list')[0];
+     var $albumTitle = $('.album-view-title');
+     var $albumArtist = $('.album-view-artist');
+     var $albumReleaseInfo = $('.album-view-release-info');
+     var $albumImage = $('.album-cover-art');
+     var $albumSongList = $('.album-view-song-list');
  
      //Remember that the text node is actually a child node of the parent element. In these selections we have simple elements where text is the first node. Therefore, we need to use the .firstChild to be able to use
-     albumTitle.firstChild.nodeValue = album.title; //remember .notation for accessing properties of obj 
-     albumArtist.firstChild.nodeValue = album.artist;
-     albumReleaseInfo.firstChild.nodeValue = album.year + ' ' + album.label;
+     $albumTitle.text(album.title); //remember .notation for accessing properties of obj 
+     $albumArtist.text(album.artist);
+     $albumReleaseInfo.text(album.year + ' ' + album.label);
      
      //we use setAttribute to set an attribute of what we have selected, in this case instead of changing the text, we are setting the src attribute (within the <img> tag in the HTML) to specify the URL of the image.
-     albumImage.setAttribute('src', album.albumArtUrl);
+     $albumImage.attr('src', album.albumArtUrl);
  
      //We clear out the inner HTML of our song listing to make sure we start with a clean slate for our template
-     albumSongList.innerHTML = '';
+     $albumSongList.empty();
  
      //We call a for loop to cycle through all the songs(titles/durations) and pass them to create row template
      for (var i = 0; i < album.songs.length; i++) {
-         albumSongList.innerHTML += createSongRow(i + 1, album.songs[i].title, album.songs[i].duration);
+         var $newRow = createSongRow(i + 1, album.songs[i].title, album.songs[i].duration);
+         $albumSongList.append($newRow);
      }
  };
 

@@ -17,16 +17,21 @@ var buildCollectionItemTemplate = function() {
    ;
     //future proofing template by wrapping it in a $(), w 
     return $(template);
+};
     
 $(window).load(function() { //This will execute function upon loading of the webpage
     
     var $collectionContainer = $('.album-covers');
     
+    //.empty will empty a node of text and other properties.
     $collectionContainer.empty(); 
     
     for(var i = 0; i < 12; i++){
         /* This loop will add 12 templates of our albums to the collections page using the += indicator. Note that we know collectionContainer is blank from the line above. Dynamic Layout is controlled in code contained in our CSS file which will affect the classes in our template, so we can ensure everything will be spaced correctly. */
         var $newThumbnail = buildCollectionItemTemplate();
+        
+        //Append will add the collection template to the end of the section with class .album-covers
         $collectionContainer.append($newThumbnail);
     }
+    
 });
