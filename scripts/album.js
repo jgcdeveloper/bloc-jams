@@ -32,6 +32,7 @@ var albumMarconi = {
 };
 
 var createSongRow = function(songNumber,songName,songLength){
+    
     var listTemplate =
         '<tr class="album-view-song-item">'
         //Here we use a data attribute to store the ' + songNumber + ' into a data attribute that can be retreived at a later time. Because we overwrite the innerHTML to place the play button, the data attribute will remain for retrieval later.     
@@ -40,7 +41,73 @@ var createSongRow = function(songNumber,songName,songLength){
       + '    <td class="song-item-duration">' + songLength + '</td>'
       + '</tr>'
       ;
-    return $(listTemplate);
+    
+    var $row = $(listTemplate);
+    
+    var clickHandler = function(){
+    
+        var $cellNumber = $(this).attr("data-song-number")
+        
+        if (currentlyPlayingSong === null) {
+        //If no song is playing, clicking on the row will start playing the song (to be added) and place a pause button. It will also store the current song number into the global currentlyPlayingSong variable.
+        
+            $(this).html(pauseButtonTemplate);
+            currentlyPlayingSong = $cellNumber;
+        
+        } else if (currentlyPlayingSong === $cellNumber) {
+        //If the row is clicked on matches the currently playing song, the playing song will stop, the play button template will be replaced, and the currentlyPlayingSong is placed back to null. Actually, its more like a stop button, not a pausebutton.
+            $(this).html(playButtonTemplate);
+            currentlyPlayingSong = null;
+         
+        } else if (currentlyPlayingSong !== $cellNumber) {
+        
+        //If we click on a different row while a song is playing on another row, we try to find which song is being played. We select that node and overwrite it to its generic name. We then place the pause button on the new element.
+            
+            //use the [attr=value] to select a specific attribute within the selected .song-item-number class. Here we will search for an attribute data-song-number = ' + currentlyPlayingSong + '
+            
+            var $currentSongElement = $('.song-item-number[data-song-number="' + currentlyPlayingSong + '"]');
+            $currentSongElement.html(currentlyPlayingSong);
+                 
+            $(this).html(pauseButtonTemplate);
+            currentlyPlayingSong = $cellNumber;
+        }
+    };
+    
+    var onHover = function(event) {
+    
+        //get the song item number
+        var songCell = $(this).find(".song-item-number");
+        
+        //get the current attribute of data-song number
+        var cellNumber = songCell.attr("data-song-number");
+            
+        
+        if (cellNumber !== currentlyPlayingSong){
+            //use .html instead of .text append to rewrite the inner HTML in song-item-number
+            songCell.html(playButtonTemplate);
+        }
+    }
+    
+    var offHover = function(event) {
+        
+        //get the song item number
+        var songCell = $(this).find(".song-item-number");
+        
+        //get the current attribute of data-song number
+        var cellNumber = songCell.attr("data-song-number");
+            
+        if (cellNumber !== currentlyPlayingSong){
+            //Append .html again to rewrite the inner HTML back to original  
+            songCell.html(cellNumber);
+        }
+    }
+        
+    //This adds a click handler to all .song-item-number nodes that are in our listTemplate.
+    $row.find('.song-item-number').click(clickHandler);
+    
+    //This adds our hover events for the row nodes in our listTemplate.
+    $row.hover(onHover,offHover);
+    return $row;
 };
 
  var setCurrentAlbum = function(album) {
@@ -71,83 +138,6 @@ var createSongRow = function(songNumber,songName,songLength){
  };
 
 
-var findParentByClassName = function(targetToFind, elementToSearch) {
-    if (elementToSearch) {
-    //Will only execute the code if the element passed to the code exists. I did not do this in my original implimentation but I understand why.
-        var currentParent = elementToSearch.parentElement;
-        //sets the currentParent = the parent of the current element passed into the function.
-        
-        while (currentParent.className != targetToFind && currentParent.className !== null) {
-        //If that parentName is not equal to our target class to find, the while loop will execute, and it will keep going up the chain of parents until the element matches the target element. Also, once it gets to the top, if you return on the topmost element, you will see a null, so it also will only execute the loop as long as there is not a null in currentParent. This is the second part of the implimentation I did not get on my initial attempt.
-            
-            currentParent = currentParent.parentElement;
-            //Looks up the DOM elements, each time getting the parent of the one before it until the loop stops.
-        }
-        return currentParent;
-    }
-};
-
-var getSongItem = function(element){
-    console.log(element.classname);
-    
-    switch(element.className) {
-        //#1 - These three are the childs of the 'song-item-number' class, if we find these, we need to go up to the parent element
-        case "ion-play":
-        case "ion-pause":
-        case "album-song-button":
-            return findParentByClassName("song-item-number", element);    
-        
-        //#2 - This is the parent row, we have called this album-view-song-item. If we find this, we need to select the child song-item-number. We can do this with a querySelector.
-        case "album-view-song-item" :
-            return element.querySelector(".song-item-number");
-        
-        //#3 - These are the other table data elements. If we find them, we need to find their parent, which will be the containing table (album-view-song-item). Then we need to select the actual child we want, which is "song-item-number".
-        case "song-item-duration":
-        case "song-item-title":
-            return ( findParentByClassName("album-view-song-item", element) ).querySelector(".song-item-number");
-        
-        //#4 - This case is if we actually click on the correct element. Claim a prize.
-        case "song-item-number":
-            return element;
-        
-        //#5 - A default case if the songItem cannot be found.
-        default:
-            alert("Something went wrong... call your friendly neighbourhood coder");
-            return;
-    }
-};
-
-var clickHandler = function(targetElement) {
-
-    var songItem = getSongItem(targetElement);
-    //As this is called from a click handler, the event target will be passed in. This will then find the current song-item-number for whatever element was clicked and store it in the songItem variable.
-    
-    if (currentlyPlayingSong === null) {
-    //If no song is playing, clicking on the row will start playing the song (to be added) and place a pause button. It will also store the current song number into the global currentlyPlayingSong variable.
-         songItem.innerHTML = pauseButtonTemplate;
-         currentlyPlayingSong = songItem.getAttribute('data-song-number');
-         
-    } else if (currentlyPlayingSong === songItem.getAttribute('data-song-number')) {
-    //If the row is clicked on matches the currently playing song, the playing song will stop, the play button template will be replaced, and the currentlyPlayingSong is placed back to null. Actually, its more like a stop button, not a pausebutton.
-         songItem.innerHTML = playButtonTemplate;
-         currentlyPlayingSong = null;
-         
-    } else if (currentlyPlayingSong !== songItem.getAttribute('data-song-number')) {
-    //If we click on a different row while a song is playing on another row, we create a new variable to store the currently playing song element location. We then overwrite that element with the generic number, basically reverting it to normal. Then we call the pauseButtonTemplate on the new row. Finally, we push to the currentlyPlayingSong variable with the new song number that we are playing.
-         var currentlyPlayingSongElement = document.querySelector('[data-song-number="' + currentlyPlayingSong + '"]');
-         currentlyPlayingSongElement.innerHTML = currentlyPlayingSongElement.getAttribute('data-song-number');
-         songItem.innerHTML = pauseButtonTemplate;
-         currentlyPlayingSong = songItem.getAttribute('data-song-number');
-    }
-};
-
-
-var SongListContainer = document.getElementsByClassName('album-view-song-list')[0];
-// Creates a container to hold our pointer to get the first instance of our table => 'album-view-song-list'
-
-var songRows = document.getElementsByClassName('album-view-song-item');
-// Creates a list of all the song rows. Note we created our <tr> with the class 'album-view-song-item'
-
 var playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></span></a>';
 // This adds the 'ion-play' playbutton icon to our playButtonTemplate. This is part of the ionian library. 
 
@@ -156,43 +146,7 @@ var pauseButtonTemplate = '<a class="album-song-button"><span class="ion-pause">
 
 var currentlyPlayingSong = null;
 
-window.onload = function() {
+
+$(document).ready (function() {
     setCurrentAlbum(albumPicasso);
-    
-    SongListContainer.addEventListener("mouseover", function(event){
-    //add a mouseover event listener to our album-view-song-list class. Event will fire whenever mousing over any element in album-view-song-list
-        
-        if(event.target.parentElement.className === "album-view-song-item") {
-        //This line does a check. It lookts to see if the currently selected event.target has a parent element of "album-view-song-item" (the class of our table row). Therefore, the code inside the if block will only execute for elements with that parent. So this effect will only occur for the table row element and its children.
-            
-            var songItem = getSongItem(event.target);
-            //Takes the target element from the Event Listener, and calls getSongItem. This will point towards the song-item-number element of the current row when mousing over ANY element on that row.
-            
-            if(songItem.getAttribute("data-song-number") !== currentlyPlayingSong){
-            //This will get the attribute of the currently selected song-item-number and compare to what is stored in the currentlyPlayingSong variable. If the contents do not match, we will return TRUE and the IF code will execute to change the innerHTML of the songItem to be the play button. If it is the currently playing song, there should be a pause button in this spot, and we do not want to overwrite that, so the if code will not execute. 
-                songItem.innerHTML = playButtonTemplate;
-            }
-        }
-    });
-    
-    for (var i = 0; i < songRows.length; i++) {
-    //This will create a loop equal to the number of song rows we have    
-        songRows[i].addEventListener("mouseleave", function(event) {
-        //This will create an Event Listener for all current song rows. When the mouseleave event fires, the function is called.
-            var songItem = getSongItem(event.target),
-                songItemNumber = songItem.getAttribute("data-song-number");
-            //sontgtem will store the specific song-item-number for the event that has been fired, and sontItemNumber will then store the data attribute from that specific song-iten-number for comparison.
-            
-            if (songItemNumber !== currentlyPlayingSong){
-            //we compare what is in our songItemNumber with what is currently playing. If they match, then the IF code will not execute, and the innerHTML of our current songItem will not be overwritten. Therefore, if we have a pause button, leaving the area will not delete it by replacing it with the stored data-song-number value    
-                songItem.innerHTML = songItemNumber;
-             }
-            
-        });
-        
-        songRows[i].addEventListener("click", function(event){
-        //This simple line of code actually handles our click event. Upon clicking, we will call a function that will do one of several things.
-            clickHandler(event.target);    
-        });
-     }
-}
+});
