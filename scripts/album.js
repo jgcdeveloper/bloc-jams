@@ -21,6 +21,7 @@ var createSongRow = function(songNumber,songName,songLength){
             $(this).html(pauseButtonTemplate);
             setSong(cellNumber);
             currentSoundFile.play();
+            updateSeekBarWhileSongPlays();
             updatePlayerBarSong();
                     
         } else if (currentlyPlayingSongNumber == cellNumber) {
@@ -51,10 +52,18 @@ var createSongRow = function(songNumber,songName,songLength){
             setSong(cellNumber);
             
             currentSoundFile.play(); //starts playing the new song
+            updateSeekBarWhileSongPlays();
                        
             updatePlayerBarSong();
             
         }
+        
+        var myVolume = currentVolume + "%",
+            $volBar = $('.player-bar .volume');
+        
+        $volBar.find('.fill').css("width",myVolume);
+        $volBar.find('.thumb').css("left",myVolume);
+        
     };
     
     var onHover = function(event) {
@@ -120,6 +129,93 @@ var setCurrentAlbum = function(album) {
     }
 };
 
+var updateSeekBarWhileSongPlays = function() {
+    if (currentSoundFile){  //If a song is playing, this code will execute
+        
+        //Time update is a custom buzz events that constantly fires with the time of the song.
+        currentSoundFile.bind('timeupdate', function(event) {
+            //getTime is the time of the currently playing sound file. getDuration is the total song length. We use these to calculate ratio
+            var seekBarFillRatio = this.getTime() / this.getDuration();
+            
+            //set our variable to hold selector for current seek bar.
+            var $seekBar = $('.seek-control .seek-bar');
+            
+            //update seek percentage of the currently clicked seek bar with the ratio we calculated
+            updateSeekPercentage($seekBar, seekBarFillRatio);
+        });
+    }
+};
+
+var updateSeekPercentage = function($seekBar, seekBarFillRatio) {
+    
+    var offsetXPercent = seekBarFillRatio * 100; //converts ratio to a percentage
+    
+    //Use Math.max and Math.min to make sure numbers dont exceed required value. Math.max returns the largest of zero or more numbers. Since we give 0, along with other arguments that will always be the minimum value. Math.min returns the smallest of the numbers. Since we have 100, anything more then 100 will result in 100.
+    offsetXPercent = Math.max(0, offsetXPercent); 
+    offsetXPercent = Math.min(100, offsetXPercent); 
+ 
+    var percentageString = offsetXPercent + '%'; //Gives us a percentage as a string with percent on the back of it
+    
+    $seekBar.find('.fill').width(percentageString);
+    $seekBar.find('.thumb').css({left: percentageString});
+ };
+
+var setupSeekBars = function() {
+    
+    var $seekBars = $('.player-bar .seek-bar'); //This selects our seek-bar class
+ 
+    $seekBars.click(function(event) {
+        
+        var currentBar = $(this).parent().attr("class"); //This stores our parent class name, for use in conditonal control.
+        
+        //The pageX variable stores the x-coordinate where the click occured. We subtract the offset from the left side where the seek bar that called the function is positioned. This gives us an indicator of how far in our seek bar is.
+        var offsetX = event.pageX - $(this).offset().left; 
+        
+        //We divide the barWidth by the offset to determine our seek bar fill ratio.
+        var barWidth = $(this).width();
+        var seekBarFillRatio = offsetX / barWidth;
+
+        if(currentBar == 'seek-control'){
+            seek(seekBarFillRatio * currentSoundFile.getDuration());       
+        } else {
+            setVolume(seekBarFillRatio * 100);  
+        }
+                        
+        //we call updateSeekPercentage with $(this), which will give us a pointer to the seek bar that was clicked, and the calculated seek bar fill ratio. This will work for either seek bar, as this click event listener was placed on both seek bars
+        updateSeekPercentage($(this), seekBarFillRatio);
+    });
+    
+    //create a mousedown event when mouse is pressed on .thumb. This event is active while the mouse is pressed down.
+    $seekBars.find('.thumb').mousedown(function(event) {
+        
+        //In this case, $(this) will be equal to the thumb node that was clicked. However, since we want to actually select the specific seek bar that the thumb is attached to, we find it using .parent().
+        var $seekBar = $(this).parent();
+        var currentBar = $(this).parent().attr("class"); //This stores our parent class name, for use in conditonal control.
+ 
+        //.bind is a jQuery method that attaches an event handler to all elements. We do this similar to an event listener, with a string (in this case 'mousemove') We bind to $(document), which allows us to move the mouse even off the seek bar. This makes things smoother, elsewise the moment we moved off the seek bar we would lose our drag. The .thumb after our mousemove is called namespacing. Because we are attaching our mousemove to the whole document, we add namespacing by way of the .thumb to ensure that the seekbar would move only if we include the .thumb string. Note, although it lookes similar to a CSS selector, it is not.
+        
+        $(document).bind('mousemove.thumb', function(event){
+            var offsetX = event.pageX - $seekBar.offset().left; //again calculate our offset as we drag the mouse
+            var barWidth = $seekBar.width(); //again, set the whole length of the seek bar that was clicked
+            var seekBarFillRatio = offsetX / barWidth; //Caclulate the seekbar ratio
+ 
+            if(currentBar == 'seek-control'){
+                seek(seekBarFillRatio * currentSoundFile.getDuration());   
+            } else {
+                setVolume(seekBarFillRatio * 100); 
+            }
+             
+            updateSeekPercentage($seekBar, seekBarFillRatio); //send the seekbar ratio back to the undateSeekPercentage function
+        });
+
+        //again, we add for the whole document, so cursor doesnt have to be directly over the seek bar when released for the new bind to work. We bind a function that actually unbinds the mousemove.thumb and mouseup.thumb functions
+        $(document).bind('mouseup.thumb', function() {  
+            $(document).unbind('mousemove.thumb');
+            $(document).unbind('mouseup.thumb');
+        });
+    });
+};
+
 var setSong = function(songNumber){
     
     //Stops the song if a song is playing
@@ -139,6 +235,12 @@ var setSong = function(songNumber){
     
     setVolume(currentVolume);
 };
+
+var seek = function(time) {
+    if (currentSoundFile) {
+        currentSoundFile.setTime(time);
+     }
+}
 
 var setVolume = function(volume) {
     if (currentSoundFile) {
@@ -179,6 +281,7 @@ var nextSong = function(){
         //Update our currentSong and currentlyPlayingSongNumber variables. Play music!
         setSong(currentSongIndex + 1);
         currentSoundFile.play();
+        updateSeekBarWhileSongPlays();
             
         //Update the NEW currentlyPlayingSong icon to a pause button
         getSongNumberCell(currentlyPlayingSongNumber).html(pauseButtonTemplate);
@@ -209,6 +312,7 @@ var previousSong = function(){
         //Update our currentSong and currentlyPlayingSongNumber variables. Play Music!
         setSong(currentSongIndex + 1);
         currentSoundFile.play();
+        updateSeekBarWhileSongPlays();
     
         //Update the NEW currentlyPlayingSong icon to a pause button
         getSongNumberCell(currentlyPlayingSongNumber).html(pauseButtonTemplate);
@@ -256,7 +360,7 @@ var currentAlbum = null;
 var currentSongFromAlbum = null;
 
 var currentSoundFile = null;
-var currentVolume = 80;
+var currentVolume = 50;
 
 
 var $previousButton = $('.main-controls .previous');
@@ -265,7 +369,9 @@ var $playPauseButton = $('.main-controls .play-pause');
 
 $(document).ready (function() {
     setCurrentAlbum(albumPicasso);
+    setupSeekBars();
     $previousButton.click(previousSong);
     $nextButton.click(nextSong);
     $playPauseButton.click(togglePlayFromPlayerBar);
+    
 });
