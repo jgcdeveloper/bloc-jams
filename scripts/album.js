@@ -182,7 +182,7 @@ var previousSong = function(){
         getSongNumberCell(currentlyPlayingSongNumber).html(pauseButtonTemplate);
     
         //Set the PREVIOUS song back to a number from the icon  
-        var prevSong = currentlyPlayingSongNumber == 5 ? 1 : currentlyPlayingSongNumber + 1; //use songIndex as currentPlayingSongNumber is string
+        var prevSong = currentlyPlayingSongNumber == 5 ? 1 : currentlyPlayingSongNumber + 1; 
         getSongNumberCell(prevSong).html(prevSong); 
           
         //Update player bar
