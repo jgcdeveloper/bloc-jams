@@ -132,63 +132,44 @@ var trackIndex = function(album, song) {
     return album.songs.indexOf(song);
 };
 
-var nextSong = function(){
-    
-    //Do nothing if no song is playing
-    if(currentSongFromAlbum !== null){ 
-    
-        //Get the current track index.. 
-        var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
-        
-        //Increment the current index
-        currentSongIndex++;
-    
-        //Is the incremented currentSongIndex greater then the length of songs, if so wrap currentSongIndex back to zero
-        currentSongIndex >= currentAlbum.songs.length ? currentSongIndex = 0 : currentSongIndex;
-            
-        //Update our currentSong and currentlyPlayingSongNumber variables
-        setSong(currentSongIndex + 1);
-            
-        //Update the NEW currentlyPlayingSong icon to a pause button
-        getSongNumberCell(currentlyPlayingSongNumber).html(pauseButtonTemplate);
-    
-        //Set the PREVIOUS song back to a number from the icon  
-        var prevSong = currentlyPlayingSongNumber == 1 ? currentAlbum.songs.length : currentSongIndex;
-        getSongNumberCell(prevSong).html(prevSong);
-        
-        //Update player bar
-        updatePlayerBarSong();
-    }
-};
-    
-var previousSong = function(){
-    
-    //Do nothing if no song is playing
-    if(currentSongFromAlbum !== null){ 
+var nextSong = function(){ buttonsNextPrev(0); };
+var previousSong = function(){ buttonsNextPrev(1); };
 
+var buttonsNextPrev = function(selector){
+    
+    //Do nothing if no song is playing
+    if(currentSongFromAlbum !== null){ 
+        
         //Get the current track index.. 
         var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
+    
+        if(selector === 0){
+            currentSongIndex++;
+            currentSongIndex >= currentAlbum.songs.length ? currentSongIndex = 0 : currentSongIndex;
+        } else {
+            currentSongIndex--;
+            currentSongIndex < 0 ? currentSongIndex = currentAlbum.songs.length - 1 : currentSongIndex;
+        }
         
-        //Increment the current index
-        currentSongIndex--;
-    
-        //Roll songIndex back to song length (-1 for the index from length) if at 0, else keep the number
-        currentSongIndex < 0 ? currentSongIndex = currentAlbum.songs.length - 1 : currentSongIndex;
-                
-        //Update our currentSong and currentlyPlayingSongNumber variables
+        //set new song
         setSong(currentSongIndex + 1);
-    
+        
         //Update the NEW currentlyPlayingSong icon to a pause button
         getSongNumberCell(currentlyPlayingSongNumber).html(pauseButtonTemplate);
-    
-        //Set the PREVIOUS song back to a number from the icon  
-        var prevSong = currentlyPlayingSongNumber == 5 ? 1 : currentlyPlayingSongNumber + 1; 
-        getSongNumberCell(prevSong).html(prevSong); 
-          
+        
+        if(selector === 0){
+            var prevSong = currentlyPlayingSongNumber == 1 ? currentAlbum.songs.length : currentSongIndex;
+            getSongNumberCell(prevSong).html(prevSong);
+        } else {
+            var prevSong = currentlyPlayingSongNumber == 5 ? 1 : currentlyPlayingSongNumber + 1; 
+            getSongNumberCell(prevSong).html(prevSong);    
+        }
+        
         //Update player bar
         updatePlayerBarSong();
-            
-    }
+        
+    };
+    
 };
 
 // This adds the 'ion-play' playbutton icon to our playButtonTemplate. This is part of the ionian library. 
