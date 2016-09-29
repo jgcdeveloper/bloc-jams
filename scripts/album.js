@@ -13,30 +13,40 @@ var createSongRow = function(songNumber,songName,songLength){
     
     var clickHandler = function(){
     
-        var $cellNumber = $(this).attr("data-song-number")
+        var cellNumber = $(this).attr("data-song-number");
         
-        if (currentlyPlayingSong === null) {
+        
+        if (currentlyPlayingSongNumber === null) {
         //If no song is playing, clicking on the row will start playing the song (to be added) and place a pause button. It will also store the current song number into the global currentlyPlayingSong variable.
         
             $(this).html(pauseButtonTemplate);
-            currentlyPlayingSong = $cellNumber;
-        
-        } else if (currentlyPlayingSong === $cellNumber) {
+            currentlyPlayingSongNumber = cellNumber;
+            currentSongFromAlbum = currentAlbum.songs[cellNumber - 1];
+            updatePlayerBarSong();
+            
+            
+        } else if (currentlyPlayingSongNumber == cellNumber) {
         //If the row is clicked on matches the currently playing song, the playing song will stop, the play button template will be replaced, and the currentlyPlayingSong is placed back to null. Actually, its more like a stop button, not a pausebutton.
             $(this).html(playButtonTemplate);
-            currentlyPlayingSong = null;
-         
-        } else if (currentlyPlayingSong !== $cellNumber) {
+            currentlyPlayingSongNumber = null;
+            currentSongFromAlbum = null;
+            $('.main-controls .play-pause').html(playerBarPlayButton);
+                   
+        } else if (currentlyPlayingSongNumber != cellNumber) {
         
         //If we click on a different row while a song is playing on another row, we try to find which song is being played. We select that node and overwrite it to its generic name. We then place the pause button on the new element.
             
             //use the [attr=value] to select a specific attribute within the selected .song-item-number class. Here we will search for an attribute data-song-number = ' + currentlyPlayingSong + '
             
-            var $currentSongElement = $('.song-item-number[data-song-number="' + currentlyPlayingSong + '"]');
-            $currentSongElement.html(currentlyPlayingSong);
+            var $currentSongElement = $('.song-item-number[data-song-number="' + currentlyPlayingSongNumber + '"]');
+            $currentSongElement.html(currentlyPlayingSongNumber);
                  
             $(this).html(pauseButtonTemplate);
-            currentlyPlayingSong = $cellNumber;
+            currentlyPlayingSongNumber = cellNumber;
+            currentSongFromAlbum = currentAlbum.songs[cellNumber - 1];
+            
+            updatePlayerBarSong();
+            
         }
     };
     
@@ -47,9 +57,8 @@ var createSongRow = function(songNumber,songName,songLength){
         
         //get the current attribute of data-song number
         var cellNumber = songCell.attr("data-song-number");
-            
-        
-        if (cellNumber !== currentlyPlayingSong){
+                
+        if (cellNumber !== currentlyPlayingSongNumber){
             //use .html instead of .text append to rewrite the inner HTML in song-item-number
             songCell.html(playButtonTemplate);
         }
@@ -63,12 +72,12 @@ var createSongRow = function(songNumber,songName,songLength){
         //get the current attribute of data-song number
         var cellNumber = songCell.attr("data-song-number");
             
-        if (cellNumber !== currentlyPlayingSong){
+        if (cellNumber !== currentlyPlayingSongNumber){
             //Append .html again to rewrite the inner HTML back to original  
             songCell.html(cellNumber);
         }
     }
-        
+    
     //This adds a click handler to all .song-item-number nodes that are in our listTemplate.
     $row.find('.song-item-number').click(clickHandler);
     
@@ -79,7 +88,7 @@ var createSongRow = function(songNumber,songName,songLength){
 
  var setCurrentAlbum = function(album) {
      
-     // Add our selectors for 5 main elements into the function (improve readibility). Note we will only have one album per page, so we select the first node with our class selector using [0]
+     currentAlbum = album; //stores this album into the currentAlbum variable
      var $albumTitle = $('.album-view-title');
      var $albumArtist = $('.album-view-artist');
      var $albumReleaseInfo = $('.album-view-release-info');
@@ -102,7 +111,83 @@ var createSongRow = function(songNumber,songName,songLength){
          var $newRow = createSongRow(i + 1, album.songs[i].title, album.songs[i].duration);
          $albumSongList.append($newRow);
      }
- };
+};
+
+var updatePlayerBarSong = function(){
+        
+        $(".song-name").text(currentSongFromAlbum.title); //Change our song name
+        $(".artist-name").text(currentAlbum.artist);
+        $(".artist-song-mobile").text(currentAlbum.artist + " - " + currentSongFromAlbum);
+        
+        $('.main-controls .play-pause').html(playerBarPauseButton);
+}
+
+var trackIndex = function(album, song) {
+     return album.songs.indexOf(song);
+};
+
+var nextSong = function(){
+    
+    //Do nothing if no song is playing
+    if(currentSongFromAlbum !== null){ 
+    
+        //Get the current track index.. 
+        var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
+        
+        //Increment the current index
+        currentSongIndex++;
+    
+        //Is the incremented currentSongIndex greater then the length of songs, if so wrap currentSongIndex back to zero
+        currentSongIndex >= currentAlbum.songs.length ? currentSongIndex = 0 : currentSongIndex;
+            
+        //Update our currentSong and currentlyPlayingSongNumber variables
+        currentSongFromAlbum = currentAlbum.songs[currentSongIndex];
+        currentlyPlayingSongNumber = (currentSongIndex + 1).toString();  //To store as string type to allow for comparisons
+    
+        //Update the NEW currentlyPlayingSong icon to a pause button
+        var $newSong = $('.song-item-number[data-song-number="' + currentlyPlayingSongNumber + '"]');
+        $newSong.html(pauseButtonTemplate);
+    
+        //Set the PREVIOUS song back to a number from the icon  
+        var prevSong = currentlyPlayingSongNumber == '1' ? currentAlbum.songs.length : currentSongIndex;
+        $('.song-item-number[data-song-number="' + prevSong + '"]').html(prevSong); //One line implimentation
+          
+        //Update player bar
+        updatePlayerBarSong();
+    }
+}
+    
+var previousSong = function(){
+    
+    //Do nothing if no song is playing
+    if(currentSongFromAlbum !== null){ 
+
+        //Get the current track index.. 
+        var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
+        
+        //Increment the current index
+        currentSongIndex--;
+    
+        //Roll songIndex back to song length (-1 for the index from length) if at 0, else keep the number
+        currentSongIndex < 0 ? currentSongIndex = currentAlbum.songs.length - 1 : currentSongIndex;
+                
+        //Update our currentSong and currentlyPlayingSongNumber variables
+        currentSongFromAlbum = currentAlbum.songs[currentSongIndex];
+        currentlyPlayingSongNumber = (currentSongIndex + 1).toString();  //To store as string type to allow for comparisons
+    
+        //Update the NEW currentlyPlayingSong icon to a pause button
+        var $newSong = $('.song-item-number[data-song-number="' + currentlyPlayingSongNumber + '"]');
+        $newSong.html(pauseButtonTemplate);
+    
+        //Set the PREVIOUS song back to a number from the icon  
+        var prevSong = currentlyPlayingSongNumber == '5' ? 1 : currentSongIndex + 2; //use songIndex as currentPlayingSongNumber is string
+        $('.song-item-number[data-song-number="' + prevSong + '"]').html(prevSong); //One line implimentation
+          
+        //Update player bar
+        updatePlayerBarSong();
+            
+    }
+};
 
 
 var playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></span></a>';
@@ -111,9 +196,18 @@ var playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></
 var pauseButtonTemplate = '<a class="album-song-button"><span class="ion-pause"></span></a>';
 //This adds the pause button template which we will use while a song is playing. Note, as per the video color scheming will be similar to the play button, so we will give this the same class name as our play button. That way the way the buttons will keep the same color scheme.
 
-var currentlyPlayingSong = null;
+var playerBarPlayButton = '<span class="ion-play"></span>'; //Play icon for player bar
+var playerBarPauseButton = '<span class="ion-pause"></span>'; //Pause icon for player bar
 
+var currentlyPlayingSongNumber = null;
+var currentAlbum = null;
+var currentSongFromAlbum = null;
+
+var $previousButton = $('.main-controls .previous');
+var $nextButton = $('.main-controls .next');
 
 $(document).ready (function() {
     setCurrentAlbum(albumPicasso);
+    $previousButton.click(previousSong);
+    $nextButton.click(nextSong);
 });
