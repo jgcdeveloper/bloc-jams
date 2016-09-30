@@ -5,7 +5,7 @@ var createSongRow = function(songNumber,songName,songLength){
         //Here we use a data attribute to store the ' + songNumber + ' into a data attribute that can be retreived at a later time. Because we overwrite the innerHTML to place the play button, the data attribute will remain for retrieval later.     
       + '    <td class="song-item-number" data-song-number="' + songNumber + '">' + songNumber + '</td>'
       + '    <td class="song-item-title">' + songName + '</td>'
-      + '    <td class="song-item-duration">' + songLength + '</td>'
+      + '    <td class="song-item-duration">' + songLength /* filterTimeCode(songLength) */ + '</td>'
       + '</tr>'
       ;
     
@@ -25,6 +25,7 @@ var createSongRow = function(songNumber,songName,songLength){
             updatePlayerBarSong();
                     
         } else if (currentlyPlayingSongNumber == cellNumber) {
+        //If the row is clicked on matches the currently playing song, the playing song will stop, the play button template will be replaced, and the currentlyPlayingSong is placed back to null. Actually, its more like a stop button, not a pausebutton.
         //If the row is clicked on matches the currently playing song, the playing song will stop, the play button template will be replaced, and the currentlyPlayingSong is placed back to null. Actually, its more like a stop button, not a pausebutton.
             $(this).html(playButtonTemplate);
             
@@ -52,8 +53,8 @@ var createSongRow = function(songNumber,songName,songLength){
             setSong(cellNumber);
             
             currentSoundFile.play(); //starts playing the new song
+            
             updateSeekBarWhileSongPlays();
-                       
             updatePlayerBarSong();
             
         }
@@ -142,6 +143,10 @@ var updateSeekBarWhileSongPlays = function() {
             
             //update seek percentage of the currently clicked seek bar with the ratio we calculated
             updateSeekPercentage($seekBar, seekBarFillRatio);
+            
+            //Update current time on the seek bar. This sends the current time in seconds, function will update in minutes
+            setCurrentTimeInPlayerBar(this.getTime());
+        
         });
     }
 };
@@ -230,10 +235,12 @@ var setSong = function(songNumber){
     //create a new sound file with a buzz object
     currentSoundFile = new buzz.sound(currentSongFromAlbum.audioUrl, {
         formats: ['mp3'],
-        preload: true
+        preload: true,
+        loop: false
     });
     
     setVolume(currentVolume);
+    
 };
 
 var seek = function(time) {
@@ -252,12 +259,34 @@ var getSongNumberCell = function(number){
     return $('.song-item-number[data-song-number="' + number + '"]');
 };
 
+var setCurrentTimeInPlayerBar = function(currentTime){
+    var currentTimeInMinutes = filterTimeCode( currentTime );
+    $(".seek-control .current-time").text(currentTimeInMinutes); //Writes over the current time of song in seek bar.
+};
+
+var setTotalTimeInPlayerBar = function(totalTime){
+    var totalTimeInMinutes = filterTimeCode(totalTime);
+    $(".seek-control .total-time").text(totalTimeInMinutes); //Writes over the total time of song in seek bar.
+}
+
+var filterTimeCode = function(timeInSeconds) {
+    var minutes = Math.floor(timeInSeconds / 60),
+        seconds = Math.floor(timeInSeconds - (minutes * 60));
+    return (minutes + ":" + (seconds < 10 ? "0"+seconds : seconds )); 
+};
+
 var updatePlayerBarSong = function(){
         
     $(".song-name").text(currentSongFromAlbum.title); //Change our song name
     $(".artist-name").text(currentAlbum.artist); //Change our artist name
     $(".artist-song-mobile").text(currentAlbum.artist + " - " + currentSongFromAlbum); //Change both for mobile
     $('.main-controls .play-pause').html(playerBarPauseButton); //Adds a pause button.
+    
+    currentSoundFile.bind('loadedmetadata', function(event){  //I had to bind to solve issue with code executing before duration was loaded
+        
+        console.log("The duration is: " + this.getDuration());
+        setTotalTimeInPlayerBar(this.getDuration()); 
+    }); 
 }
 
 var trackIndex = function(album, song) {
@@ -292,6 +321,7 @@ var nextSong = function(){
         
         //Update player bar
         updatePlayerBarSong();
+        
     }
 };
     
